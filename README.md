@@ -34,9 +34,11 @@
 
 ## 🗂️ 仓库内容
 
+```text
 ├── kaggle_nlp-getting-started.ipynb # 主 Jupyter Notebook：完整训练、验证与推理流程
 ├── README.md # 本说明文件
 └── LICENSE # MIT 开源许可证
+```
 
 > 💡 Notebook 中包含详细注释，涵盖文本预处理、Tokenizer 配置、LoRA 适配器注入、K 折交叉验证及最终风险特征生成逻辑。
 
@@ -55,7 +57,7 @@
    mkdir data  # 将上述三个 CSV 文件放入此目录
    pip install torch transformers peft scikit-learn pandas jupyter
    jupyter notebook kaggle_nlp-getting-started.ipynb
-
+   ```
    
 ## ⚠️ 数据集与合规说明（Critical Compliance Notice）
 
