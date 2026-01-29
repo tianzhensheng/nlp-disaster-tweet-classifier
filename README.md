@@ -1,74 +1,77 @@
-# nlp-disaster-tweet-classifier
-`BERT + LoRA for Disaster Tweet Classification
 
-# 🌪️ Disaster Tweet 分类器：基于 BERT + LoRA 的内容安全风控实践  
-*NLP for Real-time Content Risk Detection*
+# nlp-disaster-tweet-classifier  
+# 灾难推文分类器：基于 BERT 微调的内容安全风控实践
 
 [![Kaggle](https://img.shields.io/badge/Kaggle-NLP%20Getting%20Started-20BEFF?logo=kaggle)](https://www.kaggle.com/c/nlp-getting-started)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
-本项目复现并优化了 Kaggle 经典竞赛 **[Natural Language Processing with Disaster Tweets](https://www.kaggle.com/c/nlp-getting-started)** 的解决方案，目标是精准识别社交媒体文本中是否真实报告了自然灾害或突发事件（如地震、爆炸、洪水）。  
-不同于普通分类任务，本项目从**在线内容安全（Content Safety）和风控（Risk Control）** 视角出发，将模型输出设计为可直接集成到工业级风险评分系统中的特征信号，具备明确的业务落地价值。
+This project implements a solution for the Kaggle competition **[Natural Language Processing with Disaster Tweets](https://www.kaggle.com/c/nlp-getting-started)**, aiming to accurately classify whether a social media tweet reports a real disaster (e.g., earthquake, explosion, flood) or not.  
+不同于普通文本分类，本项目从**在线内容安全（Content Safety）与风控（Risk Control）** 的实战视角出发，将模型输出设计为可直接接入工业级风险评分系统的连续型信号，具备明确的业务集成价值。
 
-## 🔍 为什么这个项目值得做？
+## 🔍 Why This Project Matters / 为什么这个项目值得做？
 
-在真实风控场景中，仅靠关键词匹配极易被黑产绕过（例如：“🔥这火🔥烧得真旺” vs “🔥工厂爆炸起火🔥”）。本方案通过：
-- 利用 **BERT 的深层语义理解能力**，捕捉上下文意图；
-- 引入 **PEFT（Parameter-Efficient Fine-Tuning）中的 LoRA 技术**，在有限算力下实现高效微调；
-- 输出连续型 **`text_risk_score`（灾难概率）**，而非简单二分类标签，便于与下游规则引擎或用户画像系统融合。
+In real-world risk control scenarios, simple keyword matching is easily bypassed by malicious actors (e.g., “🔥This fire is lit!🔥” vs “🔥Factory exploded in flames!🔥”). This solution addresses this by:
+- 在真实风控场景中，仅靠关键词匹配极易被黑产绕过（例如：“🔥这火🔥烧得真旺” vs “🔥工厂爆炸起火🔥”）。本方案通过：
+  - Leveraging **BERT’s deep semantic understanding** to capture contextual intent.
+    - 利用 **BERT 的深层语义理解能力**，精准捕捉上下文意图；
+  - Performing **full Supervised Fine-Tuning (SFT)** on `bert-base-uncased` for optimal performance.
+    - 对 `bert-base-uncased` 进行**完整的监督式微调（SFT）**，以获得最佳性能；
+  - Outputting a continuous **`text_risk_score` (disaster probability)**, enabling seamless integration with downstream rule engines or user risk profiling systems.
+    - 输出连续型 **`text_risk_score`（灾难概率）**，便于与下游规则引擎或用户画像系统融合。
 
+This capability can be directly applied to:
 该能力可直接应用于：
+✅ Real-time detection of false disaster information  
 ✅ 虚假灾难信息识别  
+✅ High-risk content interception  
 ✅ 高危内容实时拦截  
+✅ Anomalous account behavior modeling (e.g., mass-posting disaster rumors)  
 ✅ 账号异常行为建模（如批量发布灾难谣言）
 
-## 📊 实验结果
+## 📊 Results / 实验结果
 
-| 指标 | 数值 |
-|------|------|
-| Kaggle Public Score | **0.84591** |
-| Leaderboard 排名 | **Top 13%** |
-| 5-Fold 平均 F1-Score (CV) | > 0.82 |
+| Metric / 指标 | Value / 数值 |
+|---------------|--------------|
+| Kaggle Public Score | **0.83205** |
+| Validation F1-Score (Macro) | **0.8461** |
+| Training Epochs | 2 |
 
-模型在保持高精度的同时，展现出良好的泛化能力，能有效区分“灾难隐喻”（如 "This traffic is a disaster!"）与真实事件。
+> The model demonstrates strong generalization, effectively distinguishing between literal disasters and figurative uses (e.g., "This traffic is a disaster!").  
+> 模型展现出良好的泛化能力，能有效区分“灾难隐喻”（如 "This traffic is a disaster!"）与真实事件。
 
-## 🗂️ 仓库内容
+## 🗂️ Repository Structure / 仓库结构
 
-```text
-├── kaggle_nlp-getting-started.ipynb # 主 Jupyter Notebook：完整训练、验证与推理流程
-├── README.md # 本说明文件
-└── LICENSE # MIT 开源许可证
-```
 
-> 💡 Notebook 中包含详细注释，涵盖文本预处理、Tokenizer 配置、LoRA 适配器注入、K 折交叉验证及最终风险特征生成逻辑。
+> 💡 The notebook includes detailed comments covering text preprocessing, tokenizer configuration, dataset construction, and risk feature generation logic.  
+> 💡 Notebook 中包含详细注释，涵盖文本预处理、Tokenizer 配置、数据集构建及风险特征生成逻辑。
 
-## ▶️ 如何本地运行？
+## ▶️ How to Run Locally / 如何本地运行？
 
-1. **获取数据**  
-   访问 [Kaggle 竞赛页面](https://www.kaggle.com/c/nlp-getting-started/data)，登录后接受规则并下载：
-   - `train.csv`
-   - `test.csv`
-   - `sample_submission.csv`
+### 1. Get the Data / 获取数据
+Visit the [Kaggle competition page](https://www.kaggle.com/c/nlp-getting-started/data), log in, accept the rules, and download:
+- `train.csv`
+- `test.csv`
+- `sample_submission.csv`
 
-2. **配置环境**
-   ```bash
-   git clone https://github.com/tianzhensheng/nlp-disaster-tweet-classifier.git
-   cd nlp-disaster-tweet-classifier
-   mkdir data  # 将上述三个 CSV 文件放入此目录
-   pip install torch transformers peft scikit-learn pandas jupyter
-   jupyter notebook kaggle_nlp-getting-started.ipynb
-   ```
-   
-## ⚠️ 数据集与合规说明（Critical Compliance Notice）
+Place them in your project root directory.
 
-> **本仓库不包含、也绝不允许包含任何来自 Kaggle 的原始数据文件（如 `train.csv`, `test.csv`）。**
+### 2. Set Up Environment / 配置环境
 
-- **数据来源**：本项目所用数据完全来自 Kaggle 官方竞赛 **[Natural Language Processing with Disaster Tweets](https://www.kaggle.com/c/nlp-getting-started)**。
-- **授权范围**：根据竞赛规则，该数据集仅限于 **“竞赛参与及学术、非商业用途”**（*Competition Use and Academic, Non-Commercial Use Only*），详见 [Official Rules](https://www.kaggle.com/competitions/nlp-getting-started/rules)。
-- **明确禁止**：规则第 7.B 条明确规定：**“不得向未参赛的第三方传输、复制、发布或以其他方式提供竞赛数据”**。
-- **我的承诺**：  
-  **我严格遵守上述条款，未以任何形式公开或私下分发原始数据。本仓库仅包含本人独立开发的代码、分析逻辑与模型实现。**
+pip install -r requirements.txt
+jupyter notebook kaggle_nlp-getting-started-0129.ipynb
 
-> 📌 **致技术面试官**：在内容安全、反欺诈、风控等岗位中，**数据合规意识与工程能力同等重要**。此项目的结构设计体现了我对知识产权、平台规则及负责任 AI 开发的深刻理解——这不仅是法律底线，更是专业工程师的核心素养。
+
+## ⚠️ Data & Compliance Notice / 数据与合规说明
+
+> **This repository does NOT and WILL NOT include any original Kaggle data files (e.g., `train.csv`, `test.csv`).**
+
+- **Data Source**: All data used is from the official Kaggle competition **[Natural Language Processing with Disaster Tweets](https://www.kaggle.com/c/nlp-getting-started)**.
+- **授权范围 / License Scope**: Per competition rules, the dataset is for **“Competition Use and Academic, Non-Commercial Use Only”**. See [Official Rules](https://www.kaggle.com/competitions/nlp-getting-started/rules).
+- **明确禁止 / Explicitly Prohibited**: Rule 7.B states: **“You may not transmit, copy, publish, or otherwise provide the Competition Data to any non-participant third party.”**
+- **我的承诺 / My Commitment**:  
+  **I strictly comply with these terms. No original data has been distributed in any form. This repository contains only my independently developed code, analysis, and model implementation.**
+
+> 📌 **To Technical Interviewers**: In roles like Content Safety, Anti-Fraud, and Risk Control, **data compliance awareness is as critical as engineering skill**. The structure of this project reflects my deep understanding of IP, platform rules, and responsible AI development — not just a legal baseline, but a core tenet of professional engineering.
 >
-> 
+> 📌 **致技术面试官**：在内容安全、反欺诈、风控等岗位中，**数据合规意识与工程能力同等重要**。此项目的结构设计体现了我对知识产权、平台规则及负责任 AI 开发的深刻理解——这不仅是法律底线，更是专业工程师的核心素养。
+
